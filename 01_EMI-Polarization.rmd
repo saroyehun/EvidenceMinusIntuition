@@ -1,0 +1,132 @@
+---
+title: "EMI and polarization"
+author: "David Garcia and Segun Aroyehun"
+output: pdf_document
+---
+
+# pre: observations on EMI
+```{r, message=FALSE}
+library(dplyr)
+library(lmtest)
+library(sandwich)
+library(tseries)
+library(ggplot2)
+library(ggrepel)
+library(stargazer)
+
+source("Functions.R")
+output_path <- "output"
+
+df <- read.csv("data/emi_congressw2v_prod_variables_public_laws.csv")
+
+df_avg <- df %>% rowwise() %>% mutate(Avg_pol=mean(c(House_party.mean.diff.d1, Senate_party.mean.diff.d1), na.rm=T))
+EMI <- df_avg$evidence_minus_intuition_score
+
+peakyear <- df_avg$starting_year[EMI==max(EMI)]
+peakyear
+max(EMI)
+EMI[df_avg$starting_year==peakyear-2]
+mean(EMI)
+sd(EMI)
+
+
+EMIts <- EMI[df_avg$starting_year>=peakyear]
+t <- seq(0, length(EMIts)-1)
+lin <- lm(EMIts~t)
+summary(lin)
+coeftest(lin, vcov. = vcovHAC(lin))
+
+plot(EMIts, xlab = "", ylab="EMI")
+
+ggplot(data.frame(EMIts, t), aes(x=t, y=EMIts)) + 
+  geom_point()+
+  geom_smooth(method = "lm") +
+  xlab("Sessions since 1975-76")+
+  ylab("EMI") + theme_bw()
+
+ggsave(filename = file.path(output_path, "EMI-trend.pdf"), width = 6.5, height = 3, dpi = 300, device="pdf")
+
+```
+
+
+
+
+# 1: Cross-correlations between EMI and polarization
+
+```{r, message=FALSE}
+
+Pol <- df_avg$Avg_pol
+
+lagmax <- 10
+lags <- seq(-1*lagmax, lagmax)
+
+corrs <- crosscor(Pol, EMI, lagmax)
+
+plotdf <- data.frame(x=lags, y=corrs$corr,  yminus = corrs$low, yplus= corrs$high)
+
+ggplot(plotdf, aes(x=x, y=y)) + 
+  geom_point()+ geom_vline(xintercept = 0, linetype="dotted")+ geom_hline(yintercept = 0, linetype="dotted")+
+  geom_errorbar(aes(ymin=yminus, ymax=yplus), width=.2) +
+  xlab(" (Polarization precedes)  Lag [sessions]   (EMI precedes)")+
+  ylab("Correlation coefficient") + theme_bw()
+
+ggsave(filename = file.path(output_path, "Polemi_corr.png"), width = 6.5, height = 3, dpi = 300)
+ggsave(filename = file.path(output_path, "Polemi_corr.svg"), width = 6.5, height = 3, dpi = 300, device = "svg")
+ggsave(filename = file.path(output_path, "Polemi_corr.pdf"), width = 6.5, height = 3, dpi = 300, device = "pdf")
+
+corrs$lag[abs(corrs$corr)==max(abs(corrs$corr))]
+cor.test(Pol, EMI)
+
+plotdf <- data.frame(x=Pol, y=EMI, year=df$starting_year)
+ggplot(plotdf, aes(x,y, label=year)) + geom_point() +  geom_text_repel(direction="y",size=3) + xlab("Polarization") + ylab("EMI score") + theme_bw() 
+ggsave(filename = file.path(output_path, "Polemi_scatter.png"), width = 6.5, height = 5, dpi = 300)
+ggsave(filename = file.path(output_path, "Polemi_scatter.svg"), width = 6.5, height = 5, dpi = 300, device = "svg")
+ggsave(filename = file.path(output_path, "Polemi_scatter.pdf"), width = 6.5, height = 5, dpi = 300, device = "pdf")
+```
+
+
+
+# 2: Regression models between EMI and polarization
+
+```{r, message=FALSE}
+attach(df_avg)
+model_emipol0 <- lm(EMI ~ lag(EMI, 1)) 
+model_emipol0_coefs <- coeftest(model_emipol0, vcov=vcovHAC(model_emipol0))
+model_emipol0_coefs
+adf.test(residuals(model_emipol0))
+kpss.test(residuals(model_emipol0))
+jarque.bera.test(residuals(model_emipol0))
+
+model_emipol <- lm(EMI ~ lag(EMI, 1) + Pol) 
+model_emipol_coefs <- coeftest(model_emipol, vcov=vcovHAC(model_emipol))
+model_emipol_coefs
+adf.test(residuals(model_emipol))
+kpss.test(residuals(model_emipol))
+jarque.bera.test(residuals(model_emipol))
+
+model_polemi0 <- lm(Pol ~ lag(Pol, 1)) 
+model_polemi0_coefs <- coeftest(model_polemi0, vcov=vcovHAC(model_polemi0))
+model_polemi0_coefs
+adf.test(residuals(model_polemi0))
+kpss.test(residuals(model_polemi0))
+jarque.bera.test(residuals(model_polemi0))
+
+model_polemi <- lm(Pol ~ lag(Pol, 1) + EMI) 
+model_polemi_coefs <- coeftest(model_polemi, vcov=vcovHAC(model_polemi))
+model_polemi_coefs
+adf.test(residuals(model_polemi))
+kpss.test(residuals(model_polemi))
+jarque.bera.test(residuals(model_polemi))
+
+
+stargazer(model_emipol0, model_emipol, model_polemi0, model_polemi,type = "latex", digits = 2, df = F, 
+          se=list(model_emipol0_coefs[,2], model_emipol_coefs[,2], model_polemi0_coefs[,2], model_polemi_coefs[,2]),
+          p=list(model_emipol0_coefs[,4], model_emipol_coefs[,4], model_polemi0_coefs[,4], model_polemi_coefs[,4]),
+          out="output/EMI-Pol-LM.tex")
+
+stargazer(model_emipol0, model_emipol, model_polemi0, model_polemi,type = "text", digits = 2, df = F, 
+          se=list(model_emipol0_coefs[,2], model_emipol_coefs[,2], model_polemi0_coefs[,2], model_polemi_coefs[,2]),
+          p=list(model_emipol0_coefs[,4], model_emipol_coefs[,4], model_polemi0_coefs[,4], model_polemi_coefs[,4]),
+          out="output/EMI-Pol-LM.txt")
+```
+

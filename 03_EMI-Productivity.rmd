@@ -1,0 +1,230 @@
+---
+title: "EMI and productivity"
+author: "David Garcia and Segun Aroyehun"
+output: pdf_document
+---
+
+# 1: Scatter plots
+```{r, message=FALSE}
+library(dplyr)
+library(lmtest)
+library(sandwich)
+library(tseries)
+library(ggplot2)
+library(ggrepel)
+library(stargazer)
+library(car)
+library(interactions)
+library(lsr)
+output_path <- "output"
+
+df <- read.csv("data/emi_congressw2v_prod_variables_public_laws.csv")
+df_avg <- df %>% rowwise() %>% mutate(Avg_pol=mean(c(House_party.mean.diff.d1, Senate_party.mean.diff.d1), na.rm=T))
+df_avg$EMI <- df_avg$evidence_minus_intuition_score
+
+mood_df <- read.csv('data/mood_biannual.csv')
+names(mood_df)[names(mood_df) == "FirstYear"] <- "starting_year"
+df_avg %>% left_join(mood_df, by = "starting_year") -> df_plot
+
+df_plot %>% filter(!is.na(Mood)) -> df_plot
+
+ggplot(df_plot, aes(x=EMI, y=LPI, color=Mood)) + geom_smooth(method = "lm", color="gray") + geom_point() + xlab("EMI score") + ylab("Legislative Productivity Index") + scale_color_gradient(low="red", high="blue") +  xlim(-0.22,0.36) + theme_bw() 
+ggsave(filename = file.path(output_path, "LPI_scatter.pdf"), width = 4, height = 3, dpi = 300, device = "pdf")
+
+ggplot(df_plot, aes(x=EMI, y=MLI, color=Mood)) + geom_smooth(method = "lm", color="gray") + geom_point() + xlab("EMI score") + ylab("Major Legislation Index") + scale_color_gradient(low="red", high="blue") +  xlim(-0.22,0.36) + theme_bw() 
+ggsave(filename = file.path(output_path, "MLI_scatter.pdf"), width = 4, height = 3, dpi = 300, device = "pdf")
+
+ggplot(df_plot, aes(x=EMI, y=nlaw, color=Mood)) + geom_smooth(method = "lm", color="gray")  + geom_point() + xlab("EMI score") + ylab("Number of laws (log scale)") + scale_color_gradient(low="red", high="blue") + scale_y_log10() + theme_bw() 
+
+ggsave(filename = file.path(output_path, "nlaw_scatter.pdf"), width = 4, height = 3, dpi = 300, device = "pdf")
+
+```
+
+
+# 2: Models including mood
+
+```{r, message=FALSE}
+df <- read.csv("data/emi_congressw2v_prod_variables_public_laws.csv")
+
+df_avg <- df %>% rowwise() %>% mutate(Avg_pol=mean(c(House_party.mean.diff.d1, Senate_party.mean.diff.d1), na.rm=T))
+
+df_avg$MLI <- scale(df_avg$MLI)
+df_avg$MLIpre <- lag(df_avg$MLI)
+df_avg$LPI <- scale(df_avg$LPI)
+df_avg$LPIpre <- lag(df_avg$LPI)
+df_avg$lognlaw <- scale(log(df_avg$count))
+df_avg$lognlawpre <- lag(df_avg$lognlaw)
+
+df_avg$controlDif <- df_avg$party_control!=lag(df_avg$party_control)
+df_avg$controlDif <- df_avg$party_control!=lag(df_avg$party_control)
+df_avg$EMI <- scale(df_avg$evidence_minus_intuition_score)
+df_avg$Pol <- scale(df_avg$Avg_pol)
+df_avg$logpatents <- scale(log(df_avg$number_of_patents))
+
+
+mood_df <- read.csv('data/mood_biannual.csv')
+names(mood_df)[names(mood_df) == "FirstYear"] <- "starting_year"
+
+df_avg %>% left_join(mood_df, by = "starting_year") -> df_avg_mood
+df_avg_mood$MLIpre <- lag(df_avg_mood$MLI)
+df_avg_mood$LPIpre <- lag(df_avg_mood$LPI)
+df_avg_mood$lognlawpre <- lag(df_avg_mood$lognlaw)
+df_avg_mood$controlDif <- df_avg_mood$party_control!=lag(df_avg_mood$party_control)
+df_avg_mood$controlDif <- df_avg_mood$party_control!=lag(df_avg_mood$party_control)
+
+
+df_avg_mood %>% filter(LastYear>=1949) -> df_avg_mood #one session before mood data starts
+
+df_avg_mood$MLI <- scale(df_avg_mood$MLI)
+df_avg_mood$LPI <- scale(df_avg_mood$LPI)
+df_avg_mood$lognlaw <- scale(log(df_avg_mood$count))
+
+df_avg_mood$MLIpre <- scale(df_avg_mood$MLIpre)
+df_avg_mood$LPIpre <- scale(df_avg_mood$LPIpre)
+df_avg_mood$lognlawpre <- scale(df_avg_mood$lognlawpre)
+
+df_avg_mood$EMI <- scale(df_avg_mood$evidence_minus_intuition_score)
+df_avg_mood$Pol <- scale(df_avg_mood$Avg_pol)
+df_avg_mood$logpatents <- scale(log(df_avg_mood$number_of_patents))
+df_avg_mood$Mood <- scale(df_avg_mood$Mood)
+
+attach(df_avg_mood)
+
+model_mli0 <- lm(MLI~MLIpre+Pol+party_control+controlDif+Mood)
+etaSquared(model_mli0)
+
+model_mli0_coefs <- coeftest(model_mli0, vcov=vcovHAC(model_mli0))
+model_mli <- lm(MLI~MLIpre+EMI*Pol+party_control+controlDif+Mood)
+vif(model_mli)
+model_mli_coefs <- coeftest(model_mli, vcov=vcovHAC(model_mli))
+model_mli_coefs
+adf.test(residuals(model_mli))
+kpss.test(residuals(model_mli))
+jarque.bera.test(residuals(model_mli))
+
+
+model_lpi0 <- lm(LPI~LPIpre+Pol+party_control+controlDif+Mood)
+etaSquared(model_lpi0)
+
+model_lpi0_coefs <- coeftest(model_lpi0, vcov=vcovHAC(model_lpi0))
+model_lpi <- lm(LPI~LPIpre+EMI*Pol+party_control+controlDif+Mood)
+vif(model_lpi)
+model_lpi_coefs <- coeftest(model_lpi, vcov=vcovHAC(model_lpi))
+model_lpi_coefs
+adf.test(residuals(model_lpi))
+kpss.test(residuals(model_lpi))
+jarque.bera.test(residuals(model_lpi))
+
+
+model_nlaws0 <- lm(lognlaw~lognlawpre+Pol+party_control+controlDif+Mood)
+etaSquared(model_nlaws0)
+
+model_nlaws0_coefs <- coeftest(model_nlaws0, vcov=vcovHAC(model_nlaws0))
+model_nlaws <- lm(lognlaw~lognlawpre+EMI+Pol+party_control+controlDif+Mood)
+vif(model_nlaws)
+
+model_nlaws <- lm(lognlaw~lognlawpre+EMI*Pol+party_control+controlDif+Mood)
+model_nlaws_coefs <- coeftest(model_nlaws, vcov=vcovHAC(model_nlaws))
+model_nlaws_coefs
+adf.test(residuals(model_nlaws))
+kpss.test(residuals(model_nlaws))
+jarque.bera.test(residuals(model_nlaws))
+
+stargazer(model_mli,model_lpi, model_nlaws,type = "latex", digits = 2, df = F, 
+          se=list(model_mli_coefs[,2], model_lpi_coefs[,2], model_nlaws_coefs[,2]),
+          p=list(model_mli_coefs[,4], model_lpi_coefs[,4],  model_nlaws_coefs[,4]),
+          out="output/EMI-Prod-Mood-LM.tex")
+
+stargazer(model_mli,model_lpi, model_nlaws,type = "text", digits = 2, df = F, 
+          se=list(model_mli_coefs[,2], model_lpi_coefs[,2], model_nlaws_coefs[,2]),
+          p=list(model_mli_coefs[,4], model_lpi_coefs[,4],  model_nlaws_coefs[,4]),
+          out="output/EMI-Prod-Mood-LM.txt")
+
+stargazer(model_mli0, model_mli, model_lpi0, model_lpi, model_nlaws0, model_nlaws,type = "latex", digits = 2, df = F, 
+          se=list(model_mli0_coefs[,2], model_mli_coefs[,2], model_lpi0_coefs[,2], model_lpi_coefs[,2],  model_nlaws0_coefs[,2], model_nlaws_coefs[,2]),
+          p=list(model_mli0_coefs[,4], model_mli_coefs[,4], model_lpi0_coefs[,4], model_lpi_coefs[,4],  model_nlaws0_coefs[,4], model_nlaws_coefs[,4]),
+          out="output/EMI-Prod-Mood-LM-ext.tex")
+
+stargazer(model_mli0, model_mli, model_lpi0, model_lpi, model_nlaws0, model_nlaws,type = "text", digits = 2, df = F, 
+          se=list(model_mli0_coefs[,2], model_mli_coefs[,2], model_lpi0_coefs[,2], model_lpi_coefs[,2],  model_nlaws0_coefs[,2], model_nlaws_coefs[,2]),
+          p=list(model_mli0_coefs[,4], model_mli_coefs[,4], model_lpi0_coefs[,4], model_lpi_coefs[,4],  model_nlaws0_coefs[,4], model_nlaws_coefs[,4]),
+          out="output/EMI-Prod-Mood-LM-ext.txt")
+
+```
+
+
+# 3: MLI models with patents
+
+```{r, message=FALSE}
+df <- read.csv("data/emi_congressw2v_prod_variables_public_laws.csv")
+attach(df_avg)
+  
+model_mli0 <- lm(MLI~MLIpre+Pol+logpatents+party_control+controlDif)
+model_mli0_coefs <- coeftest(model_mli0, vcov=vcovHAC(model_mli0))
+model_mli0_coefs
+
+model_mli <- lm(MLI~MLIpre+EMI+Pol+logpatents+party_control+controlDif)
+vif(model_mli)
+model_mli <- lm(MLI~MLIpre+EMI*Pol+logpatents+party_control+controlDif)
+model_mli_coefs <- coeftest(model_mli, vcov=vcovHAC(model_mli))
+model_mli_coefs
+adf.test(residuals(model_mli))
+kpss.test(residuals(model_mli))
+jarque.bera.test(residuals(model_mli)) #slight skewness in residuals - solved by HAC standard errors
+
+set.seed(1985)
+library(boot)
+bootf <- function(df, indices)
+{
+  model_mli <- lm(MLI~MLIpre+EMI+Pol+logpatents+party_control+controlDif, data=df, subset=indices)
+  return(model_mli$coefficients[3])
+}
+boots <- boot(df_avg, bootf, R=10000)
+quantile(boots$t, p=c(0.025, 0.5, 0.975))  # to verify, we perform a bootstrapping test, low part of CI still positive
+
+```
+
+# 4: LPI and nlaws models with patents
+
+```{r, message=FALSE}
+model_lpi0 <- lm(LPI~LPIpre+Pol+logpatents+party_control+controlDif)
+model_lpi0_coefs <- coeftest(model_lpi0, vcov=vcovHAC(model_lpi0))
+model_lpi0_coefs
+
+model_lpi <- lm(LPI~LPIpre+EMI+Pol+logpatents+party_control+controlDif)
+vif(model_lpi)
+model_lpi <- lm(LPI~LPIpre+EMI*Pol+logpatents+party_control+controlDif)
+model_lpi_coefs <- coeftest(model_lpi, vcov=vcovHAC(model_lpi))
+model_lpi_coefs
+adf.test(residuals(model_lpi))
+kpss.test(residuals(model_lpi))
+jarque.bera.test(residuals(model_lpi))
+
+
+model_nlaws0 <- lm(lognlaw~lognlawpre+Pol+logpatents+party_control+controlDif)
+model_nlaws0_coefs <- coeftest(model_nlaws0, vcov=vcovHAC(model_nlaws0))
+model_nlaws0_coefs
+
+model_nlaws <- lm(lognlaw~lognlawpre+EMI+Pol+logpatents+party_control+controlDif)
+vif(model_nlaws)
+model_nlaws <- lm(lognlaw~lognlawpre+EMI*Pol+logpatents+party_control+controlDif)
+model_nlaws_coefs <- coeftest(model_nlaws, vcov=vcovHAC(model_nlaws))
+model_nlaws_coefs
+adf.test(residuals(model_nlaws))
+kpss.test(residuals(model_nlaws))
+jarque.bera.test(residuals(model_nlaws))
+
+
+stargazer(model_mli0, model_mli, model_lpi0, model_lpi, model_nlaws0, model_nlaws,type = "latex", digits = 2, df = F, 
+          se=list(model_mli0_coefs[,2], model_mli_coefs[,2], model_lpi0_coefs[,2], model_lpi_coefs[,2],  model_nlaws0_coefs[,2], model_nlaws_coefs[,2]),
+          p=list(model_mli0_coefs[,4], model_mli_coefs[,4], model_lpi0_coefs[,4], model_lpi_coefs[,4],  model_nlaws0_coefs[,4], model_nlaws_coefs[,4]),
+          out="output/EMI-Prod-LM.tex")
+
+stargazer(model_mli0, model_mli, model_lpi0, model_lpi, model_nlaws0, model_nlaws,type = "text", digits = 2, df = F, 
+          se=list(model_mli0_coefs[,2], model_mli_coefs[,2], model_lpi0_coefs[,2], model_lpi_coefs[,2],  model_nlaws0_coefs[,2], model_nlaws_coefs[,2]),
+          p=list(model_mli0_coefs[,4], model_mli_coefs[,4], model_lpi0_coefs[,4], model_lpi_coefs[,4],  model_nlaws0_coefs[,4], model_nlaws_coefs[,4]),
+          out="output/EMI-Prod-LM.txt")
+```
+
+
+

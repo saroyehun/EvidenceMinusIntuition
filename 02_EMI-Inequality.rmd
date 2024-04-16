@@ -1,0 +1,200 @@
+---
+title: "EMI and inequality"
+author: "David Garcia and Segun Aroyehun"
+output: pdf_document
+---
+
+# 1: Cross-correlations between EMI and inequality
+
+```{r, message=FALSE}
+library(dplyr)
+library(lmtest)
+library(sandwich)
+library(tseries)
+library(ggplot2)
+library(ggrepel)
+library(stargazer)
+library(car)
+library(interactions)
+
+source("Functions.R")
+output_path <- "output"
+
+df <- read.csv("data/emi_congressw2v_prod_variables_public_laws.csv")
+
+df_avg <- df %>% rowwise() %>% mutate(Avg_pol=mean(c(House_party.mean.diff.d1, Senate_party.mean.diff.d1), na.rm=T))
+# Inequality data pre 1944 affected by high exemption levels: https://eml.berkeley.edu/~saez/pikettyqje.pdf
+Ineq <- df_avg$share_ptinc_top1pct[df_avg$starting_year>=1944]
+EMI <- df_avg$evidence_minus_intuition_score[df_avg$starting_year>=1944]
+Pol <- df_avg$Avg_pol[df_avg$starting_year>=1944]
+
+lagmax <- 10
+lags <- seq(-1*lagmax, lagmax)
+
+corrs <- crosscor(Ineq, EMI, lagmax)
+plotdf <- data.frame(x=lags, y=corrs$corr,  yminus = corrs$low, yplus= corrs$high)
+
+ggplot(plotdf, aes(x=x, y=y)) + 
+  geom_point()+ geom_vline(xintercept = 0, linetype="dotted")+ geom_hline(yintercept = 0, linetype="dotted")+
+  geom_errorbar(aes(ymin=yminus, ymax=yplus), width=.2) +
+  xlab(" (Inequality precedes)  Lag [sessions]  (EMI precedes) ")+
+  ylab("Correlation coefficient") + theme_bw()
+
+ggsave(filename = file.path(output_path, "Ineqemi_corr.png"), width = 6.5, height = 3, dpi = 300)
+ggsave(filename = file.path(output_path, "Ineqemi_corr.svg"), width = 6.5, height = 3, dpi = 300, device = "svg")
+ggsave(filename = file.path(output_path, "Ineqemi_corr.pdf"), width = 6.5, height = 3, dpi = 300, device = "pdf")
+
+corrs$lag[abs(corrs$corr)==max(abs(corrs$corr))]
+cor.test(EMI, Ineq)
+cor.test(lag(EMI,1), Ineq)
+cor.test(lag(EMI,2), Ineq)
+
+plotdf <- data.frame(x=lag(EMI,1), y=Ineq, year=df$starting_year[df$starting_year>=1944])
+ggplot(plotdf, aes(x,y, label=year)) + geom_point(col="red") + geom_path(col="red") + geom_text_repel(direction="y",size=3) + geom_smooth() + xlab("EMI score (lagged one session)") + ylab("Inequality (top 1%)") + theme_bw() 
+ggsave(filename = file.path(output_path, 'emilag_ineq_corr_1944.png'), width = 7, height = 5, dpi = 300)
+ggsave(filename = file.path(output_path, 'emilag_ineq_corr_1944.svg'), width = 7, height = 5, dpi = 300, device = "svg")
+ggsave(filename = file.path(output_path, 'emilag_ineq_corr_1944.pdf'), width = 7, height = 5, dpi = 300, device = "pdf")
+
+
+lagmax <- 10
+lags <- seq(-1*lagmax, lagmax)
+corrs <- crosscor(Ineq, Pol, lagmax)
+corrs$lag[abs(corrs$corr)==max(abs(corrs$corr))]
+plotdf <- data.frame(x=lags, y=corrs$corr,  yminus = corrs$low, yplus= corrs$high)
+
+ggplot(plotdf, aes(x=x, y=y)) + 
+  geom_point()+ geom_vline(xintercept = 0, linetype="dotted")+ geom_hline(yintercept = 0, linetype="dotted")+
+  geom_errorbar(aes(ymin=yminus, ymax=yplus), width=.2) +
+  xlab(" (Inequality precedes)  Lag [sessions]  (Polarization precedes)")+
+  ylab("Correlation coefficient") + theme_bw()
+
+ggsave(filename = file.path(output_path, "IneqPol_corr.png"), width = 6.5, height = 3, dpi = 300)
+ggsave(filename = file.path(output_path, "IneqPol_corr.svg"), width = 6.5, height = 3, dpi = 300, device = "svg")
+ggsave(filename = file.path(output_path, "IneqPol_corr.pdf"), width = 6.5, height = 3, dpi = 300, device = "pdf")
+
+```
+
+# 2: Regression model of Inequality with EMI
+
+```{r, message=FALSE}
+
+attach(df_avg)
+EMIpre <- lag(EMI,1)
+Polpre <- lag(Pol,1)
+Ineqpre <- lag(Ineq,1)
+
+model_ineq0 <- lm(Ineq ~ Ineqpre + Polpre) 
+model_ineq0_coefs <- coeftest(model_ineq0, vcov=vcovHAC(model_ineq0))
+model_ineq0_coefs
+
+model_ineq <- lm(Ineq ~ Ineqpre + Polpre + EMIpre)
+vif(model_ineq)
+
+model_ineq <- lm(Ineq ~  Ineqpre + Polpre * EMIpre)
+interact_plot(model =model_ineq, pred = EMIpre, modx = Polpre, interval=TRUE)
+ggsave(filename = file.path(output_path, "Interaction-Ineq.pdf"), width = 6.5, height = 5, dpi = 300, device = "pdf")
+
+model_ineq_coefs <- coeftest(model_ineq, vcov=vcovHAC(model_ineq))
+model_ineq_coefs
+adf.test(residuals(model_ineq))
+kpss.test(residuals(model_ineq))
+jarque.bera.test(residuals(model_ineq))
+
+stargazer(model_ineq0, model_ineq,type = "latex", digits = 2, df = F, 
+          se=list(model_ineq0_coefs[,2], model_ineq_coefs[,2]),
+          p=list(model_ineq0_coefs[,4], model_ineq_coefs[,4]),
+          out="output/EMI-Ineq-LM.tex")
+
+stargazer(model_ineq0, model_ineq, type = "text", digits = 2, df = F, 
+          se=list(model_ineq0_coefs[,2], model_ineq_coefs[,2]),
+          p=list(model_ineq0_coefs[,4], model_ineq_coefs[,4]),
+          out="output/EMI-Ineq-LM.txt")
+```
+
+```{r, message=FALSE}
+Pol8 <- lag(Pol,8)
+
+#Alternative specification: lag 8 for polarization
+model_ineq8 <- lm(Ineq ~ EMIpre +  Pol8 + Ineqpre, data = df_avg) 
+vif(model_ineq8)
+
+model_ineq8 <- lm(Ineq ~ EMIpre *  Pol8 + Ineqpre, data = df_avg) 
+interact_plot(model =model_ineq8, pred = EMIpre, modx = Pol8, interval=TRUE)
+ggsave(filename = file.path(output_path, "Interaction-Ineq8.pdf"), width = 6.5, height = 5, dpi = 300, device = "pdf")
+
+model_ineq8_coefs <- coeftest(model_ineq8, vcov=vcovHAC(model_ineq8))
+model_ineq8_coefs
+adf.test(residuals(model_ineq8))
+kpss.test(residuals(model_ineq8))
+jarque.bera.test(residuals(model_ineq8))
+
+
+#Alternative specification: Gini index
+Gini <- df_avg$income_gini[df_avg$starting_year>=1944]
+Ginipre <- lag(Gini,1)
+
+model_gini0 <- lm(Gini ~ Ginipre) 
+model_gini0_coefs <- coeftest(model_gini0, vcov=vcovHAC(model_gini0))
+model_gini0_coefs
+
+model_gini <- lm(Gini ~ EMIpre + Polpre +  Ginipre, data = df_avg) 
+vif(model_gini)
+
+model_gini <- lm(Gini ~ EMIpre * Polpre +  Ginipre, data = df_avg) 
+interact_plot(model =model_gini, pred = EMIpre, modx = Polpre, interval=TRUE)
+ggsave(filename = file.path(output_path, "Interaction-Ineq-Gini.pdf"), width = 6.5, height = 5, dpi = 300, device = "pdf")
+
+model_gini_coefs <- coeftest(model_gini, vcov=vcovHAC(model_gini))
+model_gini_coefs
+adf.test(residuals(model_gini))
+kpss.test(residuals(model_gini))
+jarque.bera.test(residuals(model_gini))
+
+# Alternative specification: data since 1912
+
+Ineq <- df_avg$share_ptinc_top1pct[df_avg$starting_year>=1912]
+EMI <- df_avg$evidence_minus_intuition_score[df_avg$starting_year>=1912]
+Pol <- df_avg$Avg_pol[df_avg$starting_year>=1912]
+EMIpre <- lag(EMI,1)
+Polpre <- lag(Pol,1)
+Ineqpre <- lag(Ineq,1)
+
+model_ineq0 <- lm(Ineq ~ Ineqpre) 
+model_ineq0_coefs <- coeftest(model_ineq0, vcov=vcovHAC(model_ineq0))
+model_ineq0_coefs
+
+model_ineq <- lm(Ineq ~ Ineqpre + Polpre + EMIpre)
+vif(model_ineq)
+
+model_ineq <- lm(Ineq ~  Ineqpre + Polpre * EMIpre)
+interact_plot(model =model_ineq, pred = EMIpre, modx = Polpre, interval=TRUE)
+ggsave(filename = file.path(output_path, "Interaction-Ineq-1912.pdf"), width = 6.5, height = 5, dpi = 300, device = "pdf")
+
+model_ineq_coefs <- coeftest(model_ineq, vcov=vcovHAC(model_ineq))
+model_ineq_coefs
+adf.test(residuals(model_ineq))
+kpss.test(residuals(model_ineq))
+jarque.bera.test(residuals(model_ineq))
+
+stargazer(model_gini, model_ineq, model_ineq8, type = "latex", digits = 2, df = F, 
+          se=list(model_gini_coefs[,2], model_ineq_coefs[,2], model_ineq8_coefs[,2]),
+          p=list(model_gini_coefs[,4], model_ineq_coefs[,4], model_ineq8_coefs[,4]),
+          out="output/EMI-Ineq-extra-LM.tex")
+
+stargazer(model_gini, model_ineq, model_ineq8, type = "text", digits = 2, df = F, 
+          se=list(model_gini_coefs[,2], model_ineq_coefs[,2], model_ineq8_coefs[,2]),
+          p=list(model_gini_coefs[,4], model_ineq_coefs[,4], model_ineq8_coefs[,4]),
+          out="output/EMI-Ineq-extra-LM.txt")
+
+
+set.seed(1985)
+library(boot)
+bootf <- function(df, indices)
+{
+  model_ineq <- lm(Ineq ~  Ineqpre + Polpre * EMIpre, data=df, subset=indices)
+  return(model_ineq$coefficients[4])
+}
+boots <- boot(df_avg, bootf, R=10000)
+quantile(boots$t, p=c(0.025, 0.5, 0.975))  # to verify, we perform a bootstrapping test, hight part of CI still negative
+```
+
