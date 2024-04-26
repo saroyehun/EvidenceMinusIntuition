@@ -1,0 +1,43 @@
+---
+title: "emi_validation"
+output: pdf_document
+---
+
+```{r,  message=FALSE, echo=F, cache=T}
+library(dplyr)
+library(kableExtra)
+library(pROC)
+
+indRatings <- read.csv("../data/prolific_ratings_US_congress_congressw2v.csv")
+length(indRatings$ResponseId)
+indRatings <- indRatings[complete.cases(indRatings),]
+indRatings$text <- as.character(indRatings$text)
+indRatings$party <- as.character(indRatings$party)
+indRatings$bin <- as.character(indRatings$bin)
+
+indRatings %>% group_by(item_id) %>% dplyr::summarize(rating=mean(evidence_based-evidence_free),
+                                               evidence_mean=mean(evidence_based),
+                                               intuition_mean=mean(evidence_free), 
+                                               EMI_score=min(evidence_minus_intuition_score),
+                                               decade_group=min(decade_group), n=n(),
+                                               text = min(text), party=min(party), bin=min(bin),
+                                               starting_year=min(starting_year),
+                                               ) -> emidf
+emidf$class <- emidf$evidence_mean>emidf$intuition_mean
+tmp <- roc(emidf$class, emidf$EMI_score)
+auc <- c(auc(tmp))
+
+cdf <- data.frame()
+decs <- sort(unique(emidf$decade_group))
+
+for (i in decs)
+{
+  f <- emidf$decade_group==i
+  res <- roc(emidf$class[f], emidf$EMI_score[f])
+  n <- length(emidf$class[f])
+  cdf <- rbind(cdf, data.frame(decade_starting=min(emidf$starting_year[f]), AUC=c(auc(res)), N=n))
+}
+cdf <- rbind(cdf, data.frame(decade_starting='overall', AUC=auc, N=nrow(emidf)))
+knitr::kable(cdf, format = "markdown")
+write.csv(cdf, "../output/auc_decade_overall_w2v.csv", row.names = FALSE)
+```
