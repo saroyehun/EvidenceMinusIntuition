@@ -1,6 +1,6 @@
-# Computational analysis of 145 years of US congressional speeches reveals a shift from a focus on evidence to reliance on intuition
+# Computational analysis of US congressional speeches reveals a shift from evidence to intuition
 
-This repository contains the code for the analysis and results in the manuscript **Computational analysis of 145 years of US congressional speeches reveals a shift from a focus on evidence to reliance on intuition**
+This repository contains the code for the analysis and results in the manuscript **Computational analysis of US congressional speeches reveals a shift from evidence to intuition**
 
 ## Notes
 * The scripts are numbered in the order in which the results in the paper are presented with results saved in the `output` directory.
