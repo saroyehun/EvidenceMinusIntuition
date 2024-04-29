@@ -8,7 +8,7 @@ library(dplyr)
 library(kableExtra)
 library(pROC)
 
-indRatings <- read.csv("../data/prolific_ratings_US_congress_congressw2v.csv")
+indRatings <- read.csv("data/prolific_ratings_US_congress_congressw2v.csv")
 length(indRatings$ResponseId)
 indRatings <- indRatings[complete.cases(indRatings),]
 indRatings$text <- as.character(indRatings$text)
@@ -39,5 +39,35 @@ for (i in decs)
 }
 cdf <- rbind(cdf, data.frame(decade_starting='overall', AUC=auc, N=nrow(emidf)))
 knitr::kable(cdf, format = "markdown")
-write.csv(cdf, "../output/auc_decade_overall_w2v.csv", row.names = FALSE)
+write.csv(cdf, "output/auc_decade_overall_w2v.csv", row.names = FALSE)
 ```
+
+
+
+
+```{r,  message=FALSE, echo=F, cache=T}
+
+library(irr)
+indRatings <- indRatings[complete.cases(indRatings),]
+iccevidence.all <- NULL
+iccintuition.all <- NULL
+icccombined.all <- NULL
+
+set.seed(42)
+
+indRatings %>% group_by(item_id) %>% sample_n(5) -> sel 
+ICCDifdf <- NULL
+
+for (id in unique(sel$item_id))
+{
+  evidence <- sel$evidence_based[sel$item_id==id]  
+  intuition <- sel$evidence_free[sel$item_id==id]  
+  dif <- evidence - intuition
+  
+   ICCDifdf <-rbind(ICCDifdf, data.frame(c1 = dif[1], c2 = dif[2], c3 = dif[3], c4 = dif[4], c5 = dif[5]))
+ }
+  
+icc(ICCDifdf, model = "twoway", type = "agreement", unit="average")
+```
+
+
