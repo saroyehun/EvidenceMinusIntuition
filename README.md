@@ -10,4 +10,14 @@ This repository contains the code for the analysis and results in the manuscript
   **For questions or clarifications please contact:**
   * Segun Aroyehun (segun.aroyehun@uni-konstnaz.de)
   *  David Garcia (david.garcia@uni-konstanz.de)
+ 
+## Citation
+
+```bibtex
+@article{aroyehun2024computational,
+  title={Computational analysis of US Congressional speeches reveals a shift from evidence to intuition},
+  author={Aroyehun, Segun Taofeek and Simchon, Almog and Carrella, Fabio and Lasser, Jana and Lewandowsky, Stephan and Garcia, David},
+  journal={arXiv preprint arXiv:2405.07323},
+  year={2024}
+```
   
