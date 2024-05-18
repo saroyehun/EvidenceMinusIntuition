@@ -1,6 +1,7 @@
 # Computational analysis of US congressional speeches reveals a shift from evidence to intuition
 
-This repository contains the code for the analysis and results in the manuscript **Computational analysis of US congressional speeches reveals a shift from evidence to intuition**
+This repository contains the code for the analysis and results in the manuscript **[Computational analysis of US congressional speeches reveals a shift from evidence to intuition](https://arxiv.org/abs/2405.07323)**
+
 
 ## Notes
 * The scripts are numbered in the order in which the results in the paper are presented with results saved in the `output` directory.
