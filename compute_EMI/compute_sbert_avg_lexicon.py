@@ -17,6 +17,7 @@ pandarallel.initialize(nb_workers=100 )
 
 def config(parser):
     parser.add_argument('--model_name_or_path')
+    parser.add_argument('--temporal_models_path')
     parser.add_argument('--input_file')
     parser.add_argument('--output_file')
     parser.add_argument('--evidence_lexicon')
@@ -31,6 +32,8 @@ def config(parser):
     parser.add_argument('--min_chunk_length', type=int, default=50 )
     parser.add_argument('--max_chunk_length', type=int, default=150)
     parser.add_argument('--id_column', type=str, default="speech_id")
+    parser.add_argument('--use_temporal_embeddings', action="store_true")
+    parser.add_argument('--groupby_decades', type=int, default=2)
     return parser 
 
 def get_embeddings(text, model_name_or_path):
@@ -96,7 +99,7 @@ def preprocess(df, args):
             return chunked 
 
         df['text'] = df.text.parallel_apply(chunk_by_length)
-        df = df.explode("text", ignore_index=True)    
+        df = df.explode("text", ignore_index=True)      
         df = df.drop_duplicates(subset=['text']+[f'{args.id_column}'])
         df['chunk_length'] = df.text.parallel_apply(lambda x: len(x.split()))
     return df
@@ -117,14 +120,14 @@ def main(args):
     print('Before pre-processing:', len(df))
     df = preprocess(df, args)
     print('After pre-processing:', len(df[f'{args.id_column}'].unique()))
-    evidence_sim = torch.Tensor()#.to(torch.device("cuda") if torch.cuda.is_available() else "cpu")
-    intuition_sim = torch.Tensor()#.to(torch.device("cuda") if torch.cuda.is_available() else "cpu")
+    evidence_sim = torch.Tensor()
+    intuition_sim = torch.Tensor()
     chunk_size = 1_000_000
     list_df = [df[idx:idx+chunk_size] for idx in range(0, len(df), chunk_size)]
     for batch in tqdm(list_df):
         batch_text = batch['text']
         batch_text = list(batch_text)
-        text_embeddings = get_embeddings(batch_text, args.model_name_or_path)       
+        text_embeddings = get_embeddings(batch_text, args.model_name_or_path)        
 
         if args.save_embeddings:
             import pickle 
@@ -157,9 +160,73 @@ def main(args):
     print(df.evidence_minus_intuition_score.tail())
     df.to_csv(args.output_file, index=False, compression=args.compression_type)
 
+def main_temporal(args):
+    delimiter = '\t' if args.tab_delimiter else None
+    if args.smoke_test:
+        df = pd.read_csv(args.input_file, nrows=100_000, compression=args.compression_type, delimiter=delimiter, dtype={'speech_id':object})
+    else:
+        df = pd.read_csv(args.input_file, compression=args.compression_type, delimiter=delimiter, dtype={'speech_id':object})
+    #rename text column if different from text
+    if args.text_column != 'text':
+        df.rename(columns = {args.text_column:'text'}, inplace = True)
+    df['text'] = df['text'].astype(str)
+    df = df.drop_duplicates(subset=['text']+[f'{args.id_column}'])
+    df = preprocess(df, args)
+    if args.groupby_decades == 2:
+        # Function to map each year to the beginning of its 20-year period
+        def map_to_decade_start(year):
+            # If the year is 2019 or later, map it to the most recent complete 20-year period, 1999
+            if year >= 2019:
+                return 1999
+            # Calculate the start year of each 20-year interval starting from 1879
+            interval = (year - 1879) // 20
+            start_year = 1879 + interval * 20
+            return start_year
+        df['congress'] = (((df['year'] - 1789)/2)+1).astype('int')
+        df['starting_year'] = 2*(df['congress'] - 1)+1789
+        df['decade_group'] = df.starting_year.apply(map_to_decade_start)
+    else:
+        raise ValueError("Only two-decade grouping is supported")
+    grouped_df = df.groupby('decade_group')
+    evidence_keywords = pd.read_csv(args.evidence_lexicon) 
+    evidence_keywords = list(evidence_keywords['evidence_keywords'])  
+    intuition_keywords = pd.read_csv(args.intuition_lexicon) 
+    intuition_keywords = list(intuition_keywords['intuition_keywords'])  
+    combined_df = pd.DataFrame()
+    for decade, group in tqdm(grouped_df):
+        evidence_sim = torch.Tensor()
+        intuition_sim = torch.Tensor()
+        decade_text = group['text'].parallel_apply(simplify_text)
+        decade_text = list(decade_text)
+        text_embeddings = get_embeddings(decade_text, f'{args.temporal_models_path}/decade-{decade}-model')
+        evidence_embeddings = get_embeddings(evidence_keywords, f'{args.temporal_models_path}/decade-{decade}-model')
+        intuition_embeddings = get_embeddings(intuition_keywords, f'{args.temporal_models_path}/decade-{decade}-model')
+
+        if args.avg_dict:
+            evidence_embeddings = torch.mean(evidence_embeddings, dim=0)
+            intuition_embeddings = torch.mean(intuition_embeddings, dim=0)
+        evidence_sim = torch.cat((evidence_sim, util.cos_sim(text_embeddings, evidence_embeddings).cpu()), 0)
+        intuition_sim = torch.cat((intuition_sim, util.cos_sim(text_embeddings, intuition_embeddings).cpu()), 0)
+        avg_evidence_score = np.average(evidence_sim.cpu().numpy(), axis=1)  
+        avg_intuition_score = np.average(intuition_sim.cpu().numpy(), axis=1)  
+        group['avg_evidence_score'] = avg_evidence_score
+        group['avg_intuition_score'] = avg_intuition_score
+        combined_df = pd.concat([combined_df, group])
+
+    combined_df = length_adjustment_bin(combined_df, length_column='chunk_length', minimum_length=10)
+    combined_df = evidence_minus_intuition_score(combined_df, evidence_column='evidence_adj', intuition_column='intuition_adj') 
+    print(combined_df.evidence_minus_intuition_score.head())
+    print(combined_df.evidence_minus_intuition_score.tail())
+    combined_df.to_csv(args.output_file, index=False, compression=args.compression_type)
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser = config(parser)
     args = parser.parse_args()
-    main(args)
+    if (args.use_temporal_embeddings) and (args.groupby_decades == 2):
+        main_temporal(args)
+    else:
+        main(args)
+
 

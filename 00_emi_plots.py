@@ -172,3 +172,33 @@ plt.tight_layout()
 plt.savefig(Path(output_path, 'US_EMI_party_chamber_congress_w2v.pdf'), format='pdf', dpi=300)
 plt.savefig(Path(output_path, 'US_EMI_party_chamber_congress_w2v.png'), format='png', dpi=300)
 plt.savefig(Path(output_path, 'US_EMI_party_chamber_congress_w2v.svg'), format='svg', dpi=300)
+
+#component scores
+import matplotlib.pyplot as plt
+from matplotlib import gridspec
+import seaborn as sns
+import matplotlib
+matplotlib.rcParams['lines.markersize'] = 12
+matplotlib.rcParams['lines.linewidth'] = 1
+# Set up the figure and grid
+fig = plt.figure(figsize=(12, 4))
+gs = gridspec.GridSpec(1, 1)
+
+# Main Plot
+ax = plt.subplot(gs[0, 0])
+ax.grid(True, axis='x')
+emi_year_avg = pd.read_csv(Path(data_path, 'uscongress_emi_w2v.csv'))
+sns.lineplot(x='starting_year', y='evidence_z', data=emi_year_avg,
+             marker='.', color='blue', label='Evidence', ax=ax)
+
+sns.lineplot(x='starting_year', y='intuition_z', data=emi_year_avg,
+             marker='.', color='orange', label='Intuition', ax=ax)
+
+ax.set_ylabel('Average score', fontweight='bold')
+ax.set_xlabel('Starting year', fontweight='bold')
+ax.legend(loc='lower left', frameon=False)
+
+plt.tight_layout()
+plt.savefig(Path(output_path, 'US_EMI_components.pdf'), format='pdf', dpi=300)
+plt.savefig(Path(output_path, 'US_EMI_components.png'), format='png', dpi=300)
+plt.savefig(Path(output_path, 'US_EMI_components.svg'), format='svg', dpi=300)
