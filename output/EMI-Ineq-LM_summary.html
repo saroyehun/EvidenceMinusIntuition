@@ -1,0 +1,190 @@
+<!-- preamble start -->
+<!DOCTYPE html> 
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tinytable_dzlcndaazdbgchvjy2s0</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+<!-- preamble end -->
+
+    <script>
+
+      function styleCell_dzlcndaazdbgchvjy2s0(i, j, css_id) {
+          var table = document.getElementById("tinytable_dzlcndaazdbgchvjy2s0");
+          var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
+          }
+      }
+      function insertSpanRow(i, colspan, content) {
+        var table = document.getElementById('tinytable_dzlcndaazdbgchvjy2s0');
+        var newRow = table.insertRow(i);
+        var newCell = newRow.insertCell(0);
+        newCell.setAttribute("colspan", colspan);
+        // newCell.innerText = content;
+        // this may be unsafe, but innerText does not interpret <br>
+        newCell.innerHTML = content;
+      }
+      function spanCell_dzlcndaazdbgchvjy2s0(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_dzlcndaazdbgchvjy2s0");
+        const targetRow = table.rows[i];
+        const targetCell = targetRow.cells[j];
+        for (let r = 0; r < rowspan; r++) {
+          // Only start deleting cells to the right for the first row (r == 0)
+          if (r === 0) {
+            // Delete cells to the right of the target cell in the first row
+            for (let c = colspan - 1; c > 0; c--) {
+              if (table.rows[i + r].cells[j + c]) {
+                table.rows[i + r].deleteCell(j + c);
+              }
+            }
+          }
+          // For rows below the first, delete starting from the target column
+          if (r > 0) {
+            for (let c = colspan - 1; c >= 0; c--) {
+              if (table.rows[i + r] && table.rows[i + r].cells[j]) {
+                table.rows[i + r].deleteCell(j);
+              }
+            }
+          }
+        }
+        // Set rowspan and colspan of the target cell
+        targetCell.rowSpan = rowspan;
+        targetCell.colSpan = colspan;
+      }
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: 10, j: 0 },  ], css_id: 'tinytable_css_snlrwjl03szdz0bhilmr',}, 
+          { positions: [ { i: 1, j: 0 }, { i: 2, j: 0 }, { i: 3, j: 0 }, { i: 4, j: 0 }, { i: 5, j: 0 }, { i: 6, j: 0 }, { i: 7, j: 0 }, { i: 8, j: 0 }, { i: 9, j: 0 }, { i: 14, j: 0 }, { i: 11, j: 0 }, { i: 12, j: 0 }, { i: 13, j: 0 },  ], css_id: 'tinytable_css_sim1gqjph0vq53trgh49',}, 
+          { positions: [ { i: 1, j: 1 }, { i: 2, j: 1 }, { i: 4, j: 1 }, { i: 5, j: 1 }, { i: 6, j: 1 }, { i: 7, j: 1 }, { i: 8, j: 1 }, { i: 9, j: 1 }, { i: 7, j: 2 }, { i: 11, j: 1 }, { i: 12, j: 1 }, { i: 13, j: 1 }, { i: 14, j: 1 }, { i: 12, j: 2 }, { i: 3, j: 1 }, { i: 1, j: 2 }, { i: 2, j: 2 }, { i: 3, j: 2 }, { i: 4, j: 2 }, { i: 5, j: 2 }, { i: 6, j: 2 }, { i: 11, j: 2 }, { i: 8, j: 2 }, { i: 9, j: 2 }, { i: 14, j: 2 }, { i: 13, j: 2 },  ], css_id: 'tinytable_css_lt80yz2oanqtsl3vmmdg',}, 
+          { positions: [ { i: 15, j: 1 }, { i: 15, j: 2 },  ], css_id: 'tinytable_css_gj0a34z08sgrqfwpkjpq',}, 
+          { positions: [ { i: 0, j: 0 },  ], css_id: 'tinytable_css_chcefq66pwfk0t8ukhbs',}, 
+          { positions: [ { i: 0, j: 1 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_cb69bi8s82m45eu37lgd',}, 
+          { positions: [ { i: 15, j: 0 },  ], css_id: 'tinytable_css_82caojq7zwe8pzi82wgp',}, 
+          { positions: [ { i: 10, j: 1 }, { i: 10, j: 2 },  ], css_id: 'tinytable_css_71ad5ma12w4lpslhurtk',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_dzlcndaazdbgchvjy2s0(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script>
+
+    <style>
+      /* tinytable css entries after */
+      .table td.tinytable_css_snlrwjl03szdz0bhilmr, .table th.tinytable_css_snlrwjl03szdz0bhilmr { text-align: left; border-bottom: solid black 0.05em; }
+      .table td.tinytable_css_sim1gqjph0vq53trgh49, .table th.tinytable_css_sim1gqjph0vq53trgh49 { text-align: left; }
+      .table td.tinytable_css_lt80yz2oanqtsl3vmmdg, .table th.tinytable_css_lt80yz2oanqtsl3vmmdg { text-align: center; }
+      .table td.tinytable_css_gj0a34z08sgrqfwpkjpq, .table th.tinytable_css_gj0a34z08sgrqfwpkjpq { text-align: center; border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_chcefq66pwfk0t8ukhbs, .table th.tinytable_css_chcefq66pwfk0t8ukhbs { text-align: left; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_cb69bi8s82m45eu37lgd, .table th.tinytable_css_cb69bi8s82m45eu37lgd { text-align: center; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_82caojq7zwe8pzi82wgp, .table th.tinytable_css_82caojq7zwe8pzi82wgp { text-align: left; border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_71ad5ma12w4lpslhurtk, .table th.tinytable_css_71ad5ma12w4lpslhurtk { text-align: center; border-bottom: solid black 0.05em; }
+    </style>
+    <div class="container">
+      <table class="table table-borderless" id="tinytable_dzlcndaazdbgchvjy2s0" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing='true'>
+        <thead>
+        
+              <tr>
+                <th scope="col"> </th>
+                <th scope="col">INEQ</th>
+                <th scope="col">INEQ_INT</th>
+              </tr>
+        </thead>
+        <tfoot><tr><td colspan='3'>Values in square brackets represent 95% confidence intervals.</td></tr></tfoot>
+        <tbody>
+                <tr>
+                  <td>(Intercept)        </td>
+                  <td>−0.00575 [−0.0219, 0.0104]</td>
+                  <td>0.06306 [ 0.0200,  0.1061] </td>
+                </tr>
+                <tr>
+                  <td>                   </td>
+                  <td>p=4.75e−01                </td>
+                  <td>p=5.36e−03                 </td>
+                </tr>
+                <tr>
+                  <td>Ineqpre            </td>
+                  <td>0.86545 [ 0.7186, 1.0122] </td>
+                  <td>0.56893 [ 0.3691,  0.7688] </td>
+                </tr>
+                <tr>
+                  <td>                   </td>
+                  <td>p=6.31e−14                </td>
+                  <td>p=1.78e−06                 </td>
+                </tr>
+                <tr>
+                  <td>Polpre             </td>
+                  <td>0.04139 [ 0.0053, 0.0775] </td>
+                  <td>0.00297 [−0.0407,  0.0467] </td>
+                </tr>
+                <tr>
+                  <td>                   </td>
+                  <td>p=2.58e−02                </td>
+                  <td>p=8.91e−01                 </td>
+                </tr>
+                <tr>
+                  <td>EMIpre             </td>
+                  <td>                          </td>
+                  <td>−0.11054 [−0.2015, −0.0196]</td>
+                </tr>
+                <tr>
+                  <td>                   </td>
+                  <td>                          </td>
+                  <td>p=1.88e−02                 </td>
+                </tr>
+                <tr>
+                  <td>Polpre × EMIpre    </td>
+                  <td>                          </td>
+                  <td>0.07843 [−0.0602,  0.2170] </td>
+                </tr>
+                <tr>
+                  <td>                   </td>
+                  <td>                          </td>
+                  <td>p=2.58e−01                 </td>
+                </tr>
+                <tr>
+                  <td>Num.Obs.           </td>
+                  <td>38                        </td>
+                  <td>38                         </td>
+                </tr>
+                <tr>
+                  <td>R2                 </td>
+                  <td>0.924                     </td>
+                  <td>0.951                      </td>
+                </tr>
+                <tr>
+                  <td>R2 Adj.            </td>
+                  <td>0.920                     </td>
+                  <td>0.945                      </td>
+                </tr>
+                <tr>
+                  <td>F Statistic p value</td>
+                  <td>p=2.67e-20                </td>
+                  <td>p=4.02e-21                 </td>
+                </tr>
+                <tr>
+                  <td>F                  </td>
+                  <td>212.404                   </td>
+                  <td>160.280                    </td>
+                </tr>
+        </tbody>
+      </table>
+    </div>
+<!-- postamble start -->
+  </body>
+
+</html>
+<!-- postamble end -->
+<!-- hack to avoid NA insertion in last line -->

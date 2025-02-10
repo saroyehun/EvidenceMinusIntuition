@@ -1,0 +1,40 @@
+\begin{table}
+\centering
+\begin{talltblr}[         %% tabularray outer open
+entry=none,label=none,
+note{}={Values in square brackets represent 95\% confidence intervals.},
+]                     %% tabularray outer close
+{                     %% tabularray inner open
+colspec={Q[]Q[]Q[]Q[]},
+column{2,3,4}={}{halign=c,},
+column{1}={}{halign=l,},
+hline{20}={1,2,3,4}{solid, black, 0.05em},
+}                     %% tabularray inner close
+\toprule
+& INEQ\_GINI & INEQ\_1912 & INEQ\_1912\_POL8 \\ \midrule %% TinyTableHeader
+(Intercept)         & \num{ 0.2226} [\num{ 0.1152}, \num{ 0.330}] & \num{ 0.0366} [\num{-0.00554}, \num{ 0.0788}] & \num{ 0.0449} [\num{-0.00745}, \num{ 0.0974}] \\
+& p=\num{0.000181}                              & p=\num{8.71e-02}                                & p=\num{8.96e-02}                                \\
+EMIpre              & \num{-0.2437} [\num{-0.3645}, \num{-0.123}] & \num{-0.2203} [\num{-0.38868}, \num{-0.0520}] & \num{-0.1372} [\num{-0.24331}, \num{-0.0310}] \\
+& p=\num{0.000251}                              & p=\num{1.14e-02}                                & p=\num{1.33e-02}                                \\
+Polpre              & \num{ 0.0936} [\num{ 0.0393}, \num{ 0.148}] & \num{ 0.0225} [\num{-0.03739}, \num{ 0.0824}] &                                                  \\
+& p=\num{0.001324}                              & p=\num{4.54e-01}                                &                                                  \\
+Ginipre             & \num{ 0.4569} [\num{ 0.2287}, \num{ 0.685}] &                                                  &                                                  \\
+& p=\num{0.000273}                              &                                                  &                                                  \\
+EMIpre × Polpre     & \num{ 0.2450} [\num{ 0.0816}, \num{ 0.408}] &                                                  &                                                  \\
+& p=\num{0.004487}                              &                                                  &                                                  \\
+Ineqpre             &                                                & \num{ 0.6996} [\num{ 0.55055}, \num{ 0.8487}] & \num{ 0.5226} [\num{ 0.30186}, \num{ 0.7433}] \\
+&                                                & p=\num{1.35e-12}                                & p=\num{4.78e-05}                                \\
+Polpre × EMIpre     &                                                & \num{ 0.2607} [\num{ 0.02090}, \num{ 0.5005}] &                                                  \\
+&                                                & p=\num{3.37e-02}                                &                                                  \\
+Pol8                &                                                &                                                  & \num{ 0.0447} [\num{-0.04699}, \num{ 0.1364}] \\
+&                                                &                                                  & p=\num{3.25e-01}                                \\
+EMIpre × Pol8       &                                                &                                                  & \num{ 0.1380} [\num{-0.04218}, \num{ 0.3182}] \\
+&                                                &                                                  & p=\num{1.27e-01}                                \\
+Num.Obs.            & \num{38}                                      & \num{54}                                        & \num{31}                                        \\
+R2                  & \num{0.975}                                   & \num{0.869}                                     & \num{0.968}                                     \\
+R2 Adj.             & \num{0.971}                                   & \num{0.859}                                     & \num{0.963}                                     \\
+F Statistic p value & p=8.61e-26                                     & p=5.01e-21                                       & p=5.30e-19                                       \\
+F                   & \num{315.529}                                 & \num{81.450}                                    & \num{195.749}                                   \\
+\bottomrule
+\end{talltblr}
+\end{table}

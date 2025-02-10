@@ -1,0 +1,43 @@
+\begin{table}
+\centering
+\begin{talltblr}[         %% tabularray outer open
+entry=none,label=none,
+note{}={Values in square brackets represent 95\% confidence intervals.},
+]                     %% tabularray outer close
+{                     %% tabularray inner open
+colspec={Q[]Q[]Q[]Q[]Q[]Q[]Q[]},
+column{2,3,4,5,6,7}={}{halign=c,},
+column{1}={}{halign=l,},
+hline{22}={1,2,3,4,5,6,7}{solid, black, 0.05em},
+}                     %% tabularray inner close
+\toprule
+& MLI & MLI  & LPI & LPI  & NLAWS & NLAWS  \\ \midrule %% TinyTableHeader
+(Intercept)         & \num{-0.161} [\num{-0.4029}, \num{ 0.0813}] & \num{-0.1357} [\num{-0.4690}, \num{0.198}] & \num{-0.252} [\num{-0.4815}, \num{-0.0228}] & \num{-0.4253} [\num{-0.697028}, \num{-0.154}] & \num{ 0.0303} [\num{-0.148}, \num{ 0.2091}] & \num{ 0.00575} [\num{-0.2498}, \num{ 0.261}] \\
+& p=\num{1.82e-01}                              & p=\num{4.05e-01}                             & p=\num{3.27e-02}                              & p=\num{3.98e-03}                                & p=\num{7.31e-01}                              & p=\num{9.64e-01}                               \\
+MLIpre              & \num{ 0.947} [\num{ 0.8221}, \num{ 1.0711}] & \num{ 0.7687} [\num{ 0.6170}, \num{0.920}] &                                                &                                                  &                                                &                                                 \\
+& p=\num{3.89e-13}                              & p=\num{2.02e-09}                             &                                                &                                                  &                                                &                                                 \\
+Pol                 & \num{-0.314} [\num{-0.4877}, \num{-0.1400}] & \num{ 0.2116} [\num{-0.2858}, \num{0.709}] & \num{-0.452} [\num{-0.7934}, \num{-0.1113}] & \num{-0.1373} [\num{-0.473916}, \num{ 0.199}] & \num{-1.1642} [\num{-1.453}, \num{-0.8751}] & \num{-0.89181} [\num{-1.4331}, \num{-0.351}] \\
+& p=\num{1.17e-03}                              & p=\num{3.84e-01}                             & p=\num{1.18e-02}                              & p=\num{4.04e-01}                                & p=\num{3.52e-09}                              & p=\num{2.18e-03}                               \\
+party\_controlUNI  & \num{-0.155} [\num{-0.5074}, \num{ 0.1970}] & \num{-0.0843} [\num{-0.4763}, \num{0.308}] & \num{-0.143} [\num{-0.4340}, \num{ 0.1475}] & \num{-0.0654} [\num{-0.354402}, \num{ 0.224}] & \num{-0.0960} [\num{-0.495}, \num{ 0.3026}] & \num{-0.06184} [\num{-0.4759}, \num{ 0.352}] \\
+& p=\num{3.70e-01}                              & p=\num{6.58e-01}                             & p=\num{3.17e-01}                              & p=\num{6.41e-01}                                & p=\num{6.26e-01}                              & p=\num{7.62e-01}                               \\
+controlDifTRUE      & \num{ 0.192} [\num{-0.2196}, \num{ 0.6028}] & \num{ 0.2660} [\num{-0.1412}, \num{0.673}] & \num{ 0.228} [\num{-0.1511}, \num{ 0.6078}] & \num{ 0.2942} [\num{-0.000499}, \num{ 0.589}] & \num{ 0.0120} [\num{-0.317}, \num{ 0.3410}] & \num{ 0.05186} [\num{-0.2604}, \num{ 0.364}] \\
+& p=\num{3.44e-01}                              & p=\num{1.87e-01}                             & p=\num{2.24e-01}                              & p=\num{5.04e-02}                                & p=\num{9.41e-01}                              & p=\num{7.36e-01}                               \\
+Mood                & \num{ 0.174} [\num{ 0.0142}, \num{ 0.3336}] & \num{ 0.2369} [\num{ 0.0648}, \num{0.409}] & \num{ 0.170} [\num{ 0.0415}, \num{ 0.2977}] & \num{ 0.2984} [\num{ 0.154094}, \num{ 0.443}] & \num{ 0.3740} [\num{ 0.188}, \num{ 0.5597}] & \num{ 0.39373} [\num{ 0.2315}, \num{ 0.556}] \\
+& p=\num{3.42e-02}                              & p=\num{9.55e-03}                             & p=\num{1.19e-02}                              & p=\num{3.62e-04}                                & p=\num{2.79e-04}                              & p=\num{2.99e-05}                               \\
+EMI                 &                                                & \num{ 0.6690} [\num{ 0.1375}, \num{1.201}] &                                                & \num{ 0.8277} [\num{ 0.397266}, \num{ 1.258}] &                                                & \num{ 0.26990} [\num{-0.0539}, \num{ 0.594}] \\
+&                                                & p=\num{1.63e-02}                             &                                                & p=\num{7.24e-04}                                &                                                & p=\num{9.88e-02}                               \\
+EMI × Pol           &                                                & \num{ 0.2325} [\num{-0.3902}, \num{0.855}] &                                                & \num{ 0.1291} [\num{-0.386621}, \num{ 0.645}] &                                                & \num{ 0.00245} [\num{-0.1977}, \num{ 0.203}] \\
+&                                                & p=\num{4.44e-01}                             &                                                & p=\num{6.06e-01}                                &                                                & p=\num{9.80e-01}                               \\
+LPIpre              &                                                &                                               & \num{ 0.752} [\num{ 0.5673}, \num{ 0.9359}] & \num{ 0.4442} [\num{ 0.286501}, \num{ 0.602}] &                                                &                                                 \\
+&                                                &                                               & p=\num{3.19e-08}                              & p=\num{1.12e-05}                                &                                                &                                                 \\
+lognlawpre          &                                                &                                               &                                                &                                                  & \num{-0.2434} [\num{-0.544}, \num{ 0.0571}] & \num{-0.20615} [\num{-0.5280}, \num{ 0.116}] \\
+&                                                &                                               &                                                &                                                  & p=\num{1.08e-01}                              & p=\num{2.00e-01}                               \\
+Num.Obs.            & \num{27}                                      & \num{27}                                     & \num{27}                                      & \num{27}                                        & \num{36}                                      & \num{36}                                       \\
+R2                  & \num{0.818}                                   & \num{0.851}                                  & \num{0.859}                                   & \num{0.919}                                     & \num{0.840}                                   & \num{0.852}                                    \\
+R2 Adj.             & \num{0.775}                                   & \num{0.795}                                  & \num{0.826}                                   & \num{0.890}                                     & \num{0.814}                                   & \num{0.815}                                    \\
+F statistic         & 18.90                                          & 15.45                                         & 25.67                                          & 30.91                                            & 31.58                                          & 23.06                                           \\
+Std.Errors          & Custom                                         & Custom                                        & Custom                                         & Custom                                           & Custom                                         & Custom                                          \\
+F Statistic p value & p=3.89e-07                                     & p=1.27e-06                                    & p=2.79e-08                                     & p=4.35e-09                                       & p=4.31e-11                                     & p=4.86e-10                                      \\
+\bottomrule
+\end{talltblr}
+\end{table}

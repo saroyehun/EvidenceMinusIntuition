@@ -1,0 +1,353 @@
+<!-- preamble start -->
+<!DOCTYPE html> 
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tinytable_e6y4jdjskw6w7yqt3riw</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body>
+<!-- preamble end -->
+
+    <script>
+
+      function styleCell_e6y4jdjskw6w7yqt3riw(i, j, css_id) {
+          var table = document.getElementById("tinytable_e6y4jdjskw6w7yqt3riw");
+          var cell = table.rows[i]?.cells[j];  // Safe navigation to avoid errors
+          if (cell) {
+              console.log(`Styling cell at (${i}, ${j}) with class ${css_id}`);
+              cell.classList.add(css_id);
+          } else {
+              console.warn(`Cell at (${i}, ${j}) not found.`);
+          }
+      }
+      function insertSpanRow(i, colspan, content) {
+        var table = document.getElementById('tinytable_e6y4jdjskw6w7yqt3riw');
+        var newRow = table.insertRow(i);
+        var newCell = newRow.insertCell(0);
+        newCell.setAttribute("colspan", colspan);
+        // newCell.innerText = content;
+        // this may be unsafe, but innerText does not interpret <br>
+        newCell.innerHTML = content;
+      }
+      function spanCell_e6y4jdjskw6w7yqt3riw(i, j, rowspan, colspan) {
+        var table = document.getElementById("tinytable_e6y4jdjskw6w7yqt3riw");
+        const targetRow = table.rows[i];
+        const targetCell = targetRow.cells[j];
+        for (let r = 0; r < rowspan; r++) {
+          // Only start deleting cells to the right for the first row (r == 0)
+          if (r === 0) {
+            // Delete cells to the right of the target cell in the first row
+            for (let c = colspan - 1; c > 0; c--) {
+              if (table.rows[i + r].cells[j + c]) {
+                table.rows[i + r].deleteCell(j + c);
+              }
+            }
+          }
+          // For rows below the first, delete starting from the target column
+          if (r > 0) {
+            for (let c = colspan - 1; c >= 0; c--) {
+              if (table.rows[i + r] && table.rows[i + r].cells[j]) {
+                table.rows[i + r].deleteCell(j);
+              }
+            }
+          }
+        }
+        // Set rowspan and colspan of the target cell
+        targetCell.rowSpan = rowspan;
+        targetCell.colSpan = colspan;
+      }
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: 26, j: 0 },  ], css_id: 'tinytable_css_u2y3p7rfjfy7aeh0oub8',}, 
+          { positions: [ { i: 20, j: 3 }, { i: 20, j: 6 }, { i: 20, j: 5 }, { i: 20, j: 4 }, { i: 20, j: 2 }, { i: 20, j: 1 },  ], css_id: 'tinytable_css_tzukv60d68ybfrfh9lrp',}, 
+          { positions: [ { i: 26, j: 5 }, { i: 26, j: 4 }, { i: 26, j: 2 }, { i: 26, j: 1 }, { i: 26, j: 3 }, { i: 26, j: 6 },  ], css_id: 'tinytable_css_jah9rnbcohlu4jb7b9dk',}, 
+          { positions: [ { i: 1, j: 0 }, { i: 2, j: 0 }, { i: 3, j: 0 }, { i: 4, j: 0 }, { i: 5, j: 0 }, { i: 6, j: 0 }, { i: 7, j: 0 }, { i: 8, j: 0 }, { i: 9, j: 0 }, { i: 10, j: 0 }, { i: 11, j: 0 }, { i: 12, j: 0 }, { i: 13, j: 0 }, { i: 14, j: 0 }, { i: 15, j: 0 }, { i: 16, j: 0 }, { i: 17, j: 0 }, { i: 18, j: 0 }, { i: 19, j: 0 }, { i: 24, j: 0 }, { i: 21, j: 0 }, { i: 22, j: 0 }, { i: 23, j: 0 }, { i: 25, j: 0 },  ], css_id: 'tinytable_css_j80jy9xmkjw8ssbnf7om',}, 
+          { positions: [ { i: 20, j: 0 },  ], css_id: 'tinytable_css_a9ly233wrdl379tymw9y',}, 
+          { positions: [ { i: 4, j: 1 }, { i: 5, j: 1 }, { i: 8, j: 1 }, { i: 9, j: 1 }, { i: 6, j: 1 }, { i: 3, j: 1 }, { i: 12, j: 1 }, { i: 13, j: 1 }, { i: 10, j: 1 }, { i: 7, j: 1 }, { i: 16, j: 1 }, { i: 17, j: 1 }, { i: 18, j: 1 }, { i: 11, j: 1 }, { i: 6, j: 3 }, { i: 21, j: 1 }, { i: 22, j: 1 }, { i: 19, j: 1 }, { i: 24, j: 1 }, { i: 25, j: 1 }, { i: 12, j: 3 }, { i: 23, j: 1 }, { i: 2, j: 1 }, { i: 2, j: 2 }, { i: 3, j: 2 }, { i: 4, j: 2 }, { i: 5, j: 2 }, { i: 6, j: 2 }, { i: 7, j: 2 }, { i: 8, j: 2 }, { i: 9, j: 2 }, { i: 10, j: 2 }, { i: 11, j: 2 }, { i: 12, j: 2 }, { i: 13, j: 2 }, { i: 1, j: 1 }, { i: 15, j: 2 }, { i: 16, j: 2 }, { i: 17, j: 2 }, { i: 18, j: 2 }, { i: 19, j: 2 }, { i: 6, j: 4 }, { i: 21, j: 2 }, { i: 22, j: 2 }, { i: 23, j: 2 }, { i: 24, j: 2 }, { i: 25, j: 2 }, { i: 12, j: 4 }, { i: 14, j: 1 }, { i: 15, j: 1 }, { i: 2, j: 3 }, { i: 3, j: 3 }, { i: 4, j: 3 }, { i: 5, j: 3 }, { i: 19, j: 4 }, { i: 7, j: 3 }, { i: 8, j: 3 }, { i: 9, j: 3 }, { i: 10, j: 3 }, { i: 11, j: 3 }, { i: 25, j: 4 }, { i: 13, j: 3 }, { i: 1, j: 2 }, { i: 15, j: 3 }, { i: 16, j: 3 }, { i: 17, j: 3 }, { i: 18, j: 3 }, { i: 19, j: 3 }, { i: 6, j: 5 }, { i: 21, j: 3 }, { i: 22, j: 3 }, { i: 23, j: 3 }, { i: 24, j: 3 }, { i: 25, j: 3 }, { i: 12, j: 5 }, { i: 14, j: 2 }, { i: 1, j: 4 }, { i: 2, j: 4 }, { i: 3, j: 4 }, { i: 4, j: 4 }, { i: 5, j: 4 }, { i: 19, j: 5 }, { i: 7, j: 4 }, { i: 8, j: 4 }, { i: 9, j: 4 }, { i: 10, j: 4 }, { i: 11, j: 4 }, { i: 25, j: 5 }, { i: 13, j: 4 }, { i: 1, j: 3 }, { i: 15, j: 4 }, { i: 16, j: 4 }, { i: 17, j: 4 }, { i: 18, j: 4 }, { i: 5, j: 6 }, { i: 6, j: 6 }, { i: 21, j: 4 }, { i: 22, j: 4 }, { i: 23, j: 4 }, { i: 24, j: 4 }, { i: 11, j: 6 }, { i: 12, j: 6 }, { i: 14, j: 3 }, { i: 1, j: 5 }, { i: 2, j: 5 }, { i: 3, j: 5 }, { i: 4, j: 5 }, { i: 5, j: 5 }, { i: 19, j: 6 }, { i: 7, j: 5 }, { i: 8, j: 5 }, { i: 9, j: 5 }, { i: 10, j: 5 }, { i: 11, j: 5 }, { i: 25, j: 6 }, { i: 13, j: 5 }, { i: 14, j: 5 }, { i: 15, j: 5 }, { i: 16, j: 5 }, { i: 17, j: 5 }, { i: 18, j: 5 }, { i: 18, j: 6 }, { i: 24, j: 5 }, { i: 21, j: 5 }, { i: 22, j: 5 }, { i: 23, j: 5 }, { i: 1, j: 6 }, { i: 24, j: 6 }, { i: 3, j: 6 }, { i: 14, j: 4 }, { i: 9, j: 6 }, { i: 2, j: 6 }, { i: 7, j: 6 }, { i: 4, j: 6 }, { i: 13, j: 6 }, { i: 10, j: 6 }, { i: 15, j: 6 }, { i: 8, j: 6 }, { i: 17, j: 6 }, { i: 14, j: 6 }, { i: 23, j: 6 }, { i: 16, j: 6 }, { i: 21, j: 6 }, { i: 22, j: 6 },  ], css_id: 'tinytable_css_93y53hkmparjomygaybz',}, 
+          { positions: [ { i: 0, j: 1 }, { i: 0, j: 4 }, { i: 0, j: 6 }, { i: 0, j: 5 }, { i: 0, j: 3 }, { i: 0, j: 2 },  ], css_id: 'tinytable_css_8hx6h9b9hy2m76cvwwiz',}, 
+          { positions: [ { i: 0, j: 0 },  ], css_id: 'tinytable_css_4wjl6b11un6unxmde1r2',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  styleCell_e6y4jdjskw6w7yqt3riw(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script>
+
+    <style>
+      /* tinytable css entries after */
+      .table td.tinytable_css_u2y3p7rfjfy7aeh0oub8, .table th.tinytable_css_u2y3p7rfjfy7aeh0oub8 { text-align: left; border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_tzukv60d68ybfrfh9lrp, .table th.tinytable_css_tzukv60d68ybfrfh9lrp { text-align: center; border-bottom: solid black 0.05em; }
+      .table td.tinytable_css_jah9rnbcohlu4jb7b9dk, .table th.tinytable_css_jah9rnbcohlu4jb7b9dk { text-align: center; border-bottom: solid #d3d8dc 0.1em; }
+      .table td.tinytable_css_j80jy9xmkjw8ssbnf7om, .table th.tinytable_css_j80jy9xmkjw8ssbnf7om { text-align: left; }
+      .table td.tinytable_css_a9ly233wrdl379tymw9y, .table th.tinytable_css_a9ly233wrdl379tymw9y { text-align: left; border-bottom: solid black 0.05em; }
+      .table td.tinytable_css_93y53hkmparjomygaybz, .table th.tinytable_css_93y53hkmparjomygaybz { text-align: center; }
+      .table td.tinytable_css_8hx6h9b9hy2m76cvwwiz, .table th.tinytable_css_8hx6h9b9hy2m76cvwwiz { text-align: center; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+      .table td.tinytable_css_4wjl6b11un6unxmde1r2, .table th.tinytable_css_4wjl6b11un6unxmde1r2 { text-align: left; border-top: solid #d3d8dc 0.1em; border-bottom: solid #d3d8dc 0.05em; }
+    </style>
+    <div class="container">
+      <table class="table table-borderless" id="tinytable_e6y4jdjskw6w7yqt3riw" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing='true'>
+        <thead>
+        
+              <tr>
+                <th scope="col"> </th>
+                <th scope="col">MLI</th>
+                <th scope="col">MLI </th>
+                <th scope="col">LPI</th>
+                <th scope="col">LPI </th>
+                <th scope="col">NLAWS</th>
+                <th scope="col">NLAWS </th>
+              </tr>
+        </thead>
+        <tfoot><tr><td colspan='7'>Values in square brackets represent 95% confidence intervals.</td></tr></tfoot>
+        <tbody>
+                <tr>
+                  <td>(Intercept)        </td>
+                  <td>−0.161 [−0.4029,  0.0813]</td>
+                  <td>−0.1357 [−0.4690, 0.198]</td>
+                  <td>−0.252 [−0.4815, −0.0228]</td>
+                  <td>−0.4253 [−0.697028, −0.154]</td>
+                  <td>0.0303 [−0.148,  0.2091] </td>
+                  <td>0.00575 [−0.2498,  0.261] </td>
+                </tr>
+                <tr>
+                  <td>                   </td>
+                  <td>p=1.82e−01               </td>
+                  <td>p=4.05e−01              </td>
+                  <td>p=3.27e−02               </td>
+                  <td>p=3.98e−03                 </td>
+                  <td>p=7.31e−01               </td>
+                  <td>p=9.64e−01                </td>
+                </tr>
+                <tr>
+                  <td>MLIpre             </td>
+                  <td>0.947 [ 0.8221,  1.0711] </td>
+                  <td>0.7687 [ 0.6170, 0.920] </td>
+                  <td>                         </td>
+                  <td>                           </td>
+                  <td>                         </td>
+                  <td>                          </td>
+                </tr>
+                <tr>
+                  <td>                   </td>
+                  <td>p=3.89e−13               </td>
+                  <td>p=2.02e−09              </td>
+                  <td>                         </td>
+                  <td>                           </td>
+                  <td>                         </td>
+                  <td>                          </td>
+                </tr>
+                <tr>
+                  <td>Pol                </td>
+                  <td>−0.314 [−0.4877, −0.1400]</td>
+                  <td>0.2116 [−0.2858, 0.709] </td>
+                  <td>−0.452 [−0.7934, −0.1113]</td>
+                  <td>−0.1373 [−0.473916,  0.199]</td>
+                  <td>−1.1642 [−1.453, −0.8751]</td>
+                  <td>−0.89181 [−1.4331, −0.351]</td>
+                </tr>
+                <tr>
+                  <td>                   </td>
+                  <td>p=1.17e−03               </td>
+                  <td>p=3.84e−01              </td>
+                  <td>p=1.18e−02               </td>
+                  <td>p=4.04e−01                 </td>
+                  <td>p=3.52e−09               </td>
+                  <td>p=2.18e−03                </td>
+                </tr>
+                <tr>
+                  <td>party_controlUNI   </td>
+                  <td>−0.155 [−0.5074,  0.1970]</td>
+                  <td>−0.0843 [−0.4763, 0.308]</td>
+                  <td>−0.143 [−0.4340,  0.1475]</td>
+                  <td>−0.0654 [−0.354402,  0.224]</td>
+                  <td>−0.0960 [−0.495,  0.3026]</td>
+                  <td>−0.06184 [−0.4759,  0.352]</td>
+                </tr>
+                <tr>
+                  <td>                   </td>
+                  <td>p=3.70e−01               </td>
+                  <td>p=6.58e−01              </td>
+                  <td>p=3.17e−01               </td>
+                  <td>p=6.41e−01                 </td>
+                  <td>p=6.26e−01               </td>
+                  <td>p=7.62e−01                </td>
+                </tr>
+                <tr>
+                  <td>controlDifTRUE     </td>
+                  <td>0.192 [−0.2196,  0.6028] </td>
+                  <td>0.2660 [−0.1412, 0.673] </td>
+                  <td>0.228 [−0.1511,  0.6078] </td>
+                  <td>0.2942 [−0.000499,  0.589] </td>
+                  <td>0.0120 [−0.317,  0.3410] </td>
+                  <td>0.05186 [−0.2604,  0.364] </td>
+                </tr>
+                <tr>
+                  <td>                   </td>
+                  <td>p=3.44e−01               </td>
+                  <td>p=1.87e−01              </td>
+                  <td>p=2.24e−01               </td>
+                  <td>p=5.04e−02                 </td>
+                  <td>p=9.41e−01               </td>
+                  <td>p=7.36e−01                </td>
+                </tr>
+                <tr>
+                  <td>Mood               </td>
+                  <td>0.174 [ 0.0142,  0.3336] </td>
+                  <td>0.2369 [ 0.0648, 0.409] </td>
+                  <td>0.170 [ 0.0415,  0.2977] </td>
+                  <td>0.2984 [ 0.154094,  0.443] </td>
+                  <td>0.3740 [ 0.188,  0.5597] </td>
+                  <td>0.39373 [ 0.2315,  0.556] </td>
+                </tr>
+                <tr>
+                  <td>                   </td>
+                  <td>p=3.42e−02               </td>
+                  <td>p=9.55e−03              </td>
+                  <td>p=1.19e−02               </td>
+                  <td>p=3.62e−04                 </td>
+                  <td>p=2.79e−04               </td>
+                  <td>p=2.99e−05                </td>
+                </tr>
+                <tr>
+                  <td>EMI                </td>
+                  <td>                         </td>
+                  <td>0.6690 [ 0.1375, 1.201] </td>
+                  <td>                         </td>
+                  <td>0.8277 [ 0.397266,  1.258] </td>
+                  <td>                         </td>
+                  <td>0.26990 [−0.0539,  0.594] </td>
+                </tr>
+                <tr>
+                  <td>                   </td>
+                  <td>                         </td>
+                  <td>p=1.63e−02              </td>
+                  <td>                         </td>
+                  <td>p=7.24e−04                 </td>
+                  <td>                         </td>
+                  <td>p=9.88e−02                </td>
+                </tr>
+                <tr>
+                  <td>EMI × Pol          </td>
+                  <td>                         </td>
+                  <td>0.2325 [−0.3902, 0.855] </td>
+                  <td>                         </td>
+                  <td>0.1291 [−0.386621,  0.645] </td>
+                  <td>                         </td>
+                  <td>0.00245 [−0.1977,  0.203] </td>
+                </tr>
+                <tr>
+                  <td>                   </td>
+                  <td>                         </td>
+                  <td>p=4.44e−01              </td>
+                  <td>                         </td>
+                  <td>p=6.06e−01                 </td>
+                  <td>                         </td>
+                  <td>p=9.80e−01                </td>
+                </tr>
+                <tr>
+                  <td>LPIpre             </td>
+                  <td>                         </td>
+                  <td>                        </td>
+                  <td>0.752 [ 0.5673,  0.9359] </td>
+                  <td>0.4442 [ 0.286501,  0.602] </td>
+                  <td>                         </td>
+                  <td>                          </td>
+                </tr>
+                <tr>
+                  <td>                   </td>
+                  <td>                         </td>
+                  <td>                        </td>
+                  <td>p=3.19e−08               </td>
+                  <td>p=1.12e−05                 </td>
+                  <td>                         </td>
+                  <td>                          </td>
+                </tr>
+                <tr>
+                  <td>lognlawpre         </td>
+                  <td>                         </td>
+                  <td>                        </td>
+                  <td>                         </td>
+                  <td>                           </td>
+                  <td>−0.2434 [−0.544,  0.0571]</td>
+                  <td>−0.20615 [−0.5280,  0.116]</td>
+                </tr>
+                <tr>
+                  <td>                   </td>
+                  <td>                         </td>
+                  <td>                        </td>
+                  <td>                         </td>
+                  <td>                           </td>
+                  <td>p=1.08e−01               </td>
+                  <td>p=2.00e−01                </td>
+                </tr>
+                <tr>
+                  <td>Num.Obs.           </td>
+                  <td>27                       </td>
+                  <td>27                      </td>
+                  <td>27                       </td>
+                  <td>27                         </td>
+                  <td>36                       </td>
+                  <td>36                        </td>
+                </tr>
+                <tr>
+                  <td>R2                 </td>
+                  <td>0.818                    </td>
+                  <td>0.851                   </td>
+                  <td>0.859                    </td>
+                  <td>0.919                      </td>
+                  <td>0.840                    </td>
+                  <td>0.852                     </td>
+                </tr>
+                <tr>
+                  <td>R2 Adj.            </td>
+                  <td>0.775                    </td>
+                  <td>0.795                   </td>
+                  <td>0.826                    </td>
+                  <td>0.890                      </td>
+                  <td>0.814                    </td>
+                  <td>0.815                     </td>
+                </tr>
+                <tr>
+                  <td>F statistic        </td>
+                  <td>18.90                    </td>
+                  <td>15.45                   </td>
+                  <td>25.67                    </td>
+                  <td>30.91                      </td>
+                  <td>31.58                    </td>
+                  <td>23.06                     </td>
+                </tr>
+                <tr>
+                  <td>Std.Errors         </td>
+                  <td>Custom                   </td>
+                  <td>Custom                  </td>
+                  <td>Custom                   </td>
+                  <td>Custom                     </td>
+                  <td>Custom                   </td>
+                  <td>Custom                    </td>
+                </tr>
+                <tr>
+                  <td>F Statistic p value</td>
+                  <td>p=3.89e-07               </td>
+                  <td>p=1.27e-06              </td>
+                  <td>p=2.79e-08               </td>
+                  <td>p=4.35e-09                 </td>
+                  <td>p=4.31e-11               </td>
+                  <td>p=4.86e-10                </td>
+                </tr>
+        </tbody>
+      </table>
+    </div>
+<!-- postamble start -->
+  </body>
+
+</html>
+<!-- postamble end -->
+<!-- hack to avoid NA insertion in last line -->

@@ -1,0 +1,32 @@
+\begin{table}
+\centering
+\begin{talltblr}[         %% tabularray outer open
+entry=none,label=none,
+note{}={Values in square brackets represent 95\% confidence intervals.},
+]                     %% tabularray outer close
+{                     %% tabularray inner open
+colspec={Q[]Q[]Q[]},
+column{2,3}={}{halign=c,},
+column{1}={}{halign=l,},
+hline{12}={1,2,3}{solid, black, 0.05em},
+}                     %% tabularray inner close
+\toprule
+& INEQ & INEQ\_INT \\ \midrule %% TinyTableHeader
+(Intercept)         & \num{-0.00575} [\num{-0.0219}, \num{0.0104}] & \num{ 0.06306} [\num{ 0.0200}, \num{ 0.1061}] \\
+& p=\num{4.75e-01}                               & p=\num{5.36e-03}                                \\
+Ineqpre             & \num{ 0.86545} [\num{ 0.7186}, \num{1.0122}] & \num{ 0.56893} [\num{ 0.3691}, \num{ 0.7688}] \\
+& p=\num{6.31e-14}                               & p=\num{1.78e-06}                                \\
+Polpre              & \num{ 0.04139} [\num{ 0.0053}, \num{0.0775}] & \num{ 0.00297} [\num{-0.0407}, \num{ 0.0467}] \\
+& p=\num{2.58e-02}                               & p=\num{8.91e-01}                                \\
+EMIpre              &                                                 & \num{-0.11054} [\num{-0.2015}, \num{-0.0196}] \\
+&                                                 & p=\num{1.88e-02}                                \\
+Polpre × EMIpre     &                                                 & \num{ 0.07843} [\num{-0.0602}, \num{ 0.2170}] \\
+&                                                 & p=\num{2.58e-01}                                \\
+Num.Obs.            & \num{38}                                       & \num{38}                                        \\
+R2                  & \num{0.924}                                    & \num{0.951}                                     \\
+R2 Adj.             & \num{0.920}                                    & \num{0.945}                                     \\
+F Statistic p value & p=2.67e-20                                      & p=4.02e-21                                       \\
+F                   & \num{212.404}                                  & \num{160.280}                                   \\
+\bottomrule
+\end{talltblr}
+\end{table}
