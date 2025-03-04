@@ -177,26 +177,29 @@ models <- list(
 # Generate LaTeX table
 f <- function(x) format(x, digits = 3, nsmall = 2)
 row <- tribble(~term, ~m1,  ~m2, ~m3, ~m4,
-                'F Statistic p value', formatted_f_p_values[1], formatted_f_p_values[2],  formatted_f_p_values[3], formatted_f_p_values[4]
+                'F Statistic', formatted_f_statistics[1], formatted_f_statistics[2],  formatted_f_statistics[3], formatted_f_statistics[4],
+               'F Statistic p value', formatted_f_p_values[1], formatted_f_p_values[2],  formatted_f_p_values[3], formatted_f_p_values[4]
 )
                 
-attr(row, 'position') <- 14
+attr(row, 'position') <- 16
 
 modelsummary(
   models,
-  output = "output/EMI-Pol-LM_summary.html",  # Change to "html" for HTML or "docx" for Word
+  output = "output/EMI-Pol-LM_summary.html",  
   estimate  = "{estimate} [{conf.low}, {conf.high}]",
   statistic = "p={p.value}", conf_level=0.95, fmt=f,
   notes = "Values in square brackets represent 95% confidence intervals.",
-  add_rows=row,  gof_omit="AIC|BIC|RMSE|Log.Lik."
+  add_rows=row,  gof_omit="AIC|BIC|RMSE|Log.Lik.",
+  vcov = function(model) vcovHAC(model)
   )
 
 modelsummary(
   models,
-  output = "output/EMI-Pol-LM_summary.tex",  # Change to "html" for HTML or "docx" for Word
+  output = "output/EMI-Pol-LM_summary.tex", 
   estimate  = "{estimate} [{conf.low}, {conf.high}]",
   statistic = "p={p.value}", conf_level=0.95, fmt=f,
   notes = "Values in square brackets represent 95% confidence intervals.",
-  add_rows=row, gof_omit="AIC|BIC|RMSE|Log.Lik."
+  add_rows=row, gof_omit="AIC|BIC|RMSE|Log.Lik.",
+  vcov = function(model) vcovHAC(model)
   )
 ```

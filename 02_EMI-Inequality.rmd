@@ -151,6 +151,7 @@ models <- list(
 # Generate LaTeX table
 f <- function(x) format(x, digits = 3, nsmall = 2)
 row <- tribble(~term, ~m1,  ~m2,
+                'F Statistic', formatted_f_statistics[1], formatted_f_statistics[2],
                 'F Statistic p value', formatted_f_p_values[1], formatted_f_p_values[2]
 )
                 
@@ -162,7 +163,8 @@ modelsummary(
   estimate  = "{estimate} [{conf.low}, {conf.high}]",
   statistic = "p={p.value}", conf_level=0.95, fmt=f,
   notes = "Values in square brackets represent 95% confidence intervals.",
-  add_rows=row,  gof_omit="AIC|BIC|RMSE|Log.Lik."
+  add_rows=row,  gof_omit="AIC|BIC|RMSE|Log.Lik.",
+  vcov = function(model) vcovHAC(model)
   )
 
 modelsummary(
@@ -171,7 +173,8 @@ modelsummary(
   estimate  = "{estimate} [{conf.low}, {conf.high}]",
   statistic = "p={p.value}", conf_level=0.95, fmt=f,
   notes = "Values in square brackets represent 95% confidence intervals.",
-  add_rows=row,  gof_omit="AIC|BIC|RMSE|Log.Lik."
+  add_rows=row,  gof_omit="AIC|BIC|RMSE|Log.Lik.",
+  vcov = function(model) vcovHAC(model)
   )
 ```
 
@@ -288,6 +291,7 @@ models <- list(
 # Generate LaTeX table
 f <- function(x) format(x, digits = 3, nsmall = 2)
 row <- tribble(~term, ~m1,  ~m2, ~m3,
+                'F Statistic', formatted_f_statistics[1], formatted_f_statistics[2],  formatted_f_statistics[3],
                 'F Statistic p value', formatted_f_p_values[1], formatted_f_p_values[2], formatted_f_p_values[3]
 )
                 
@@ -299,7 +303,8 @@ modelsummary(
   estimate  = "{estimate} [{conf.low}, {conf.high}]",
   statistic = "p={p.value}", conf_level=0.95, fmt=f,
   notes = "Values in square brackets represent 95% confidence intervals.",
-  add_rows=row, gof_omit="AIC|BIC|RMSE|Log.Lik."
+  add_rows=row, gof_omit="AIC|BIC|RMSE|Log.Lik.",
+  vcov = function(model) vcovHAC(model)
   )
 
 modelsummary(
@@ -308,7 +313,8 @@ modelsummary(
   estimate  = "{estimate} [{conf.low}, {conf.high}]",
   statistic = "p={p.value}", conf_level=0.95, fmt=f,
   notes = "Values in square brackets represent 95% confidence intervals.",
-  add_rows=row, gof_omit="AIC|BIC|RMSE|Log.Lik."
+  add_rows=row, gof_omit="AIC|BIC|RMSE|Log.Lik.",
+  vcov = function(model) vcovHAC(model)
   )
 set.seed(1985)
 library(boot)
